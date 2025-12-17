@@ -17,6 +17,7 @@
       body {
         font-family: 'Quicksand', sans-serif;
         overscroll-behavior-y: none;
+        -webkit-tap-highlight-color: transparent; /* Remove tap highlight on mobile */
       }
 
       /* Floating Hearts Animation */
@@ -186,12 +187,19 @@
       .flip-back {
         transform: rotateY(180deg);
       }
+
+      /* Long Press Feedback */
+      .holding {
+        transform: scale(0.98);
+        background-color: rgba(244, 63, 94, 0.1) !important;
+        border-color: #f43f5e !important;
+      }
     </style>
   </head>
   <body class="h-screen bg-gradient-to-br from-pink-200 via-rose-100 to-indigo-200 text-gray-800 flex flex-col items-center justify-center overflow-hidden relative selection:bg-rose-300 selection:text-white px-4 pt-16 pb-4 sm:pt-20">
     
     <!-- Premium Trial Banner with Countdown (Fixed at Top) -->
-    <div id="premium-banner" class="fixed top-0 left-0 w-full z-[150] bg-gradient-to-r from-rose-600 to-pink-600 text-white shadow-[0_4px_15px_rgba(0,0,0,0.1)] transform -translate-y-full opacity-0 animate-banner-enter  transition-transform duration-500">
+    <div id="premium-banner" class="fixed top-0 left-0 w-full z-[150] bg-gradient-to-r from-rose-600 to-pink-600 text-white shadow-[0_4px_15px_rgba(0,0,0,0.1)] transform -translate-y-full opacity-0 animate-banner-enter rounded-b-2xl transition-transform duration-500">
       <div class="w-full max-w-md mx-auto px-6 py-3 flex flex-row items-center justify-between">
         <div class="flex items-center gap-3">
             <div class="bg-white/20 p-1.5 rounded-full">
@@ -266,9 +274,9 @@
         </svg>
         <div class="text-center font-['Segoe_UI']">
           <h2 class="text-3xl font-semibold text-gray-700 tracking-tight">Microsoft</h2>
-          <!-- <div class="mt-2 flex items-center justify-center gap-2">
+          <div class="mt-2 flex items-center justify-center gap-2">
             <span class="px-3 py-1 bg-gray-100 text-gray-500 text-xs font-bold uppercase tracking-widest rounded-full border border-gray-200">Beta Version</span>
-          </div> -->
+          </div>
         </div>
       </div>
       <div class="absolute bottom-10 w-48 h-1 bg-gray-100 rounded-full overflow-hidden">
@@ -408,18 +416,50 @@
         </div>
 
         <!-- BACK SIDE: ADMIN PANEL -->
-        <div id="admin-panel" class="flip-back glass-panel rounded-[2rem] sm:rounded-[2.5rem] p-6 shadow-2xl border-rose-200 flex flex-col h-full">
-            <div class="flex justify-between items-center mb-6 pb-4 border-b border-rose-200/50">
+        <div id="admin-panel" class="flip-back glass-panel rounded-[2rem] sm:rounded-[2.5rem] p-6 shadow-2xl border-rose-200 flex flex-col h-full relative">
+            <div class="flex justify-between items-center mb-4 pb-2 border-b border-rose-200/50">
                 <h3 class="font-bold text-rose-700 flex items-center gap-2 text-base sm:text-lg"><i data-lucide="lock" class="w-5 h-5"></i> Secret Database</h3>
                 <button id="close-admin" class="text-xs text-rose-50 hover:bg-rose-500 bg-rose-400 transition-colors font-bold px-3 py-1.5 rounded-full shadow-md">Close</button>
             </div>
+            
+            <!-- SEARCH & SORT CONTROLS -->
+            <div class="flex gap-2 mb-3">
+                <div class="relative flex-1">
+                    <i data-lucide="search" class="absolute left-2 top-1/2 -translate-y-1/2 w-3 h-3 text-gray-400"></i>
+                    <input type="text" id="admin-search" placeholder="Search names..." class="w-full pl-7 pr-2 py-1.5 text-xs border border-rose-100 rounded-lg focus:outline-none focus:border-rose-400 bg-white/50 placeholder-rose-300 text-gray-600">
+                </div>
+                <select id="admin-sort" class="text-xs border border-rose-100 rounded-lg px-2 py-1.5 focus:outline-none focus:border-rose-400 bg-white/50 text-gray-600">
+                    <option value="newest">Newest</option>
+                    <option value="oldest">Oldest</option>
+                    <option value="high-score">High %</option>
+                    <option value="low-score">Low %</option>
+                </select>
+            </div>
+
             <div class="flex-grow overflow-hidden relative rounded-xl bg-white/30 border border-white/50">
-                <div id="history-list" class="absolute inset-0 overflow-y-auto custom-scrollbar p-2 space-y-2">
+                <div id="history-list" class="absolute inset-0 overflow-y-auto custom-scrollbar p-2 space-y-2 select-none">
                     <p class="text-center text-rose-300 text-xs py-10">Connecting to Cloud...</p>
                 </div>
             </div>
-            <div class="mt-4 text-center">
+            <div class="mt-2 text-center">
                 <p class="text-[10px] text-rose-400 font-mono">Restricted Access • Admin Only</p>
+                <p class="text-[9px] text-rose-300/80 mt-1">Long press any record to delete</p>
+            </div>
+
+            <!-- DELETE MODAL (Hidden by default) -->
+            <div id="delete-modal" class="hidden absolute inset-0 z-50 bg-white/95 rounded-[2rem] flex flex-col items-center justify-center p-6 animate-fade-up">
+                <div class="bg-rose-50 p-3 rounded-full mb-4">
+                    <i data-lucide="trash-2" class="w-6 h-6 text-rose-500"></i>
+                </div>
+                <h3 class="text-rose-700 font-bold text-lg mb-1">Delete Record?</h3>
+                <p class="text-xs text-gray-500 mb-4 text-center">Enter master key to confirm deletion.</p>
+                
+                <input type="password" id="master-key-input" placeholder="Master Key" class="w-full border border-rose-200 rounded-xl px-4 py-3 text-sm mb-4 focus:outline-none focus:border-rose-400 bg-white shadow-sm text-center tracking-widest">
+                
+                <div class="flex gap-3 w-full">
+                    <button id="cancel-delete" class="flex-1 bg-gray-100 hover:bg-gray-200 text-gray-600 py-3 rounded-xl text-xs font-bold transition-colors">Cancel</button>
+                    <button id="confirm-delete" class="flex-1 bg-rose-500 hover:bg-rose-600 text-white py-3 rounded-xl text-xs font-bold shadow-lg shadow-rose-200 transition-all">Delete</button>
+                </div>
             </div>
         </div>
 
@@ -429,7 +469,7 @@
     <script type="module">
       import { initializeApp } from 'https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js';
       import { getAuth, signInAnonymously, signInWithCustomToken, onAuthStateChanged } from 'https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js';
-      import { getFirestore, collection, addDoc, onSnapshot } from 'https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js';
+      import { getFirestore, collection, addDoc, deleteDoc, doc, onSnapshot } from 'https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js';
 
       // ==========================================
       // FIREBASE CONFIG
@@ -447,10 +487,18 @@
       const app = initializeApp(firebaseConfig);
       const auth = getAuth(app);
       const db = getFirestore(app);
-      const appId = typeof __app_id !== 'undefined' ? __app_id : 'love-calculator-prod';
+      
+      // FIXED: Hardcoded App ID to ensure old data always loads
+      const appId = 'love-calculator-prod';
 
       let currentUser = null;
       let adminTapCount = 0;
+      let allMatchesData = []; 
+      
+      // Delete Feature Variables
+      let longPressTimer;
+      let itemToDeleteId = null;
+      const MASTER_KEY = "pr98";
 
       // 0. SPLASH SCREEN & INIT
       window.addEventListener('load', () => {
@@ -527,7 +575,7 @@
       const form = document.getElementById('love-form');
       const loadingState = document.getElementById('loading-state');
       const loadingText = document.getElementById('loading-text');
-      const premiumBanner = document.getElementById('premium-banner'); // ADDED
+      const premiumBanner = document.getElementById('premium-banner'); 
       
       const resultOverlay = document.getElementById('result-overlay');
       const particlesContainer = document.getElementById('particles-container');
@@ -547,6 +595,15 @@
       
       const sharePartnerBtn = document.getElementById('share-partner-btn');
       const captureCard = document.getElementById('capture-card');
+
+      const adminSearchInput = document.getElementById('admin-search');
+      const adminSortSelect = document.getElementById('admin-sort');
+      
+      // Delete Modal Elements
+      const deleteModal = document.getElementById('delete-modal');
+      const cancelDeleteBtn = document.getElementById('cancel-delete');
+      const confirmDeleteBtn = document.getElementById('confirm-delete');
+      const masterKeyInput = document.getElementById('master-key-input');
 
       const loadingMessages = [
         'Scanning Biometrics... 💓',
@@ -582,7 +639,7 @@
         setTimeout(async () => {
           clearInterval(msgInterval);
 
-          
+          // NEW LOGIC: Prince + Tejashvi = 97%
           const name1 = yourName.toLowerCase();
           const name2 = partnerName.toLowerCase();
           let percentage;
@@ -799,36 +856,121 @@
         });
       }
 
-      // 7. Real-time Data Listener
+      // Admin Search & Sort Listeners
+      if(adminSearchInput) {
+        adminSearchInput.addEventListener('input', renderAdminList);
+      }
+      if(adminSortSelect) {
+        adminSortSelect.addEventListener('change', renderAdminList);
+      }
+
+      // DELETE FEATURE LOGIC
+      if (cancelDeleteBtn) {
+        cancelDeleteBtn.addEventListener('click', () => {
+            deleteModal.classList.add('hidden');
+            itemToDeleteId = null;
+            masterKeyInput.value = '';
+        });
+      }
+
+      if (confirmDeleteBtn) {
+        confirmDeleteBtn.addEventListener('click', async () => {
+            const key = masterKeyInput.value.trim();
+            if (key === MASTER_KEY && itemToDeleteId) {
+                try {
+                    await deleteDoc(doc(db, 'artifacts', appId, 'public', 'data', 'love_matches', itemToDeleteId));
+                    deleteModal.classList.add('hidden');
+                    itemToDeleteId = null;
+                    masterKeyInput.value = '';
+                    // List will auto-update via snapshot
+                } catch (err) {
+                    alert('Error deleting: ' + err.message);
+                }
+            } else {
+                masterKeyInput.classList.add('border-red-500', 'animate-pulse');
+                setTimeout(() => masterKeyInput.classList.remove('border-red-500', 'animate-pulse'), 500);
+            }
+        });
+      }
+
+      // 7. Real-time Data Listener & Render
       function setupRealtimeListener() {
         const q = collection(db, 'artifacts', appId, 'public', 'data', 'love_matches');
         onSnapshot(q, snapshot => {
-          const matches = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
-          matches.sort((a, b) => (b.timestamp || 0) - (a.timestamp || 0));
-
-          if (matches.length === 0) {
-            if(historyList) historyList.innerHTML = '<p class="text-center text-rose-300 text-xs py-2">No matches yet.</p>';
-            return;
-          }
-
-          if(historyList) {
-            historyList.innerHTML = matches.map(match => `
-                <div class="flex justify-between items-center bg-white/60 p-3 rounded-2xl border border-white/50 text-xs hover:bg-white hover:shadow-md transition-all duration-300 cursor-default group">
-                    <div class="font-bold text-gray-600 capitalize flex items-center gap-2">
-                        <span>${match.name1}</span>
-                        <span class="text-rose-400 text-[10px] group-hover:scale-125 transition-transform">❤️</span>
-                        <span>${match.name2}</span>
-                    </div>
-                    <div class="font-extrabold ${getScoreColor(match.percentage)} bg-white/50 px-2 py-1 rounded-lg">
-                        ${match.percentage}%
-                    </div>
-                </div>
-            `).join('');
-          }
+          allMatchesData = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+          renderAdminList();
         }, error => {
           console.error('Listen Error:', error);
           if(historyList) historyList.innerHTML = `<div class="text-center py-4"><p class="text-red-400 text-xs font-bold">Error Loading Data</p><p class="text-gray-400 text-[10px] mt-1">${error.code || error.message}</p></div>`;
         });
+      }
+
+      function renderAdminList() {
+        if(!historyList) return;
+        
+        const searchTerm = adminSearchInput ? adminSearchInput.value.toLowerCase() : '';
+        const sortType = adminSortSelect ? adminSortSelect.value : 'newest';
+
+        let filtered = allMatchesData.filter(m => 
+            (m.name1 && m.name1.toLowerCase().includes(searchTerm)) || 
+            (m.name2 && m.name2.toLowerCase().includes(searchTerm))
+        );
+
+        filtered.sort((a, b) => {
+            if (sortType === 'newest') return (b.timestamp || 0) - (a.timestamp || 0);
+            if (sortType === 'oldest') return (a.timestamp || 0) - (b.timestamp || 0);
+            if (sortType === 'high-score') return (b.percentage || 0) - (a.percentage || 0);
+            if (sortType === 'low-score') return (a.percentage || 0) - (b.percentage || 0);
+            return 0;
+        });
+
+        if (filtered.length === 0) {
+            historyList.innerHTML = '<p class="text-center text-rose-300 text-xs py-2">No matches found.</p>';
+            return;
+        }
+
+        // Attach event handlers manually after rendering string
+        historyList.innerHTML = ''; // Clear current
+        
+        filtered.forEach(match => {
+            const itemDiv = document.createElement('div');
+            itemDiv.className = 'flex justify-between items-center bg-white/60 p-3 rounded-2xl border border-white/50 text-xs hover:bg-white hover:shadow-md transition-all duration-300 cursor-default group mb-2 active:scale-95';
+            itemDiv.innerHTML = `
+                <div class="font-bold text-gray-600 capitalize flex items-center gap-2 pointer-events-none">
+                    <span>${match.name1}</span>
+                    <span class="text-rose-400 text-[10px] group-hover:scale-125 transition-transform">❤️</span>
+                    <span>${match.name2}</span>
+                </div>
+                <div class="font-extrabold ${getScoreColor(match.percentage)} bg-white/50 px-2 py-1 rounded-lg pointer-events-none">
+                    ${match.percentage}%
+                </div>
+            `;
+
+            // Long Press Logic
+            itemDiv.addEventListener('mousedown', () => startLongPress(match.id, itemDiv));
+            itemDiv.addEventListener('touchstart', () => startLongPress(match.id, itemDiv));
+            
+            const cancel = () => {
+                clearTimeout(longPressTimer);
+                itemDiv.classList.remove('holding');
+            };
+            
+            itemDiv.addEventListener('mouseup', cancel);
+            itemDiv.addEventListener('mouseleave', cancel);
+            itemDiv.addEventListener('touchend', cancel);
+            itemDiv.addEventListener('touchmove', cancel);
+
+            historyList.appendChild(itemDiv);
+        });
+      }
+
+      function startLongPress(id, element) {
+        element.classList.add('holding');
+        longPressTimer = setTimeout(() => {
+            itemToDeleteId = id;
+            element.classList.remove('holding');
+            deleteModal.classList.remove('hidden');
+        }, 800); // 800ms long press
       }
 
       function getScoreColor(p) {
