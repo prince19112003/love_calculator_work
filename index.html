@@ -582,14 +582,14 @@
         setTimeout(async () => {
           clearInterval(msgInterval);
 
-          // NEW LOGIC: Prince + Tejashvi = 94%
+          
           const name1 = yourName.toLowerCase();
           const name2 = partnerName.toLowerCase();
           let percentage;
 
           if ((name1.includes('prince') && name2.includes('tejashvi')) ||
               (name1.includes('tejashvi') && name2.includes('prince'))) {
-              percentage = 94;
+              percentage = 97;
           } else {
               // Existing random calculation
               const combined = (yourName + partnerName).toLowerCase().replace(/[^a-z]/g, '');
