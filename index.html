@@ -213,7 +213,7 @@
   <body class="h-screen bg-gradient-to-br from-pink-200 via-rose-100 to-indigo-200 text-gray-800 flex flex-col items-center justify-center overflow-hidden relative selection:bg-rose-300 selection:text-white px-4 pt-16 pb-4 sm:pt-20">
     
     <!-- Premium Trial Banner with Countdown (Fixed at Top) -->
-    <div id="premium-banner" class="fixed top-0 left-0 w-full z-[150] bg-gradient-to-r from-rose-600 to-pink-600 text-white shadow-[0_4px_15px_rgba(0,0,0,0.1)] transform -translate-y-full opacity-0 animate-banner-enter  transition-transform duration-500">
+    <div id="premium-banner" class="fixed top-0 left-0 w-full z-[150] bg-gradient-to-r from-rose-600 to-pink-600 text-white shadow-[0_4px_15px_rgba(0,0,0,0.1)] transform -translate-y-full opacity-0 animate-banner-enter rounded-b-2xl transition-transform duration-500">
       <div class="w-full max-w-md mx-auto px-6 py-3 flex flex-row items-center justify-between">
         <div class="flex items-center gap-3">
             <div class="bg-white/20 p-1.5 rounded-full">
@@ -288,7 +288,9 @@
         </svg>
         <div class="text-center font-['Segoe_UI']">
           <h2 class="text-3xl font-semibold text-gray-700 tracking-tight">Microsoft</h2>
-         
+          <div class="mt-2 flex items-center justify-center gap-2">
+            <span class="px-3 py-1 bg-gray-100 text-gray-500 text-xs font-bold uppercase tracking-widest rounded-full border border-gray-200">Beta Version</span>
+          </div>
         </div>
       </div>
       <div class="absolute bottom-10 w-48 h-1 bg-gray-100 rounded-full overflow-hidden">
@@ -308,7 +310,7 @@
         <div class="flip-front glass-panel rounded-[2rem] sm:rounded-[2.5rem] p-6 sm:p-8 relative overflow-hidden group">
             
             <!-- Header -->
-            <div id="header-title" class="relative z-10 text-center mb-6 sm:mb-10 cursor-pointer select-none active:scale-95 transition-transform duration-300">
+            <div id="header-title" class="relative z-10 text-center mb-6 sm:mb-10 cursor-default select-none active:scale-95 transition-transform duration-300">
                 <h1 class="text-3xl sm:text-4xl font-extrabold bg-gradient-to-r from-rose-500 to-pink-500 bg-clip-text text-transparent flex items-center justify-center gap-2 sm:gap-3 drop-shadow-sm filter">
                     <i data-lucide="sparkles" class="text-rose-400 w-5 h-5 sm:w-6 sm:h-6 animate-pulse"></i>
                     Love Calc
@@ -361,64 +363,54 @@
              <!-- RESULT VIEW (Inside Card - Final Destination) -->
              <div id="result-view" class="hidden relative z-10 text-center animate-fade-up">
                 
-                <!-- Capture Card Container -->
-                <div id="capture-container" class="mb-6">
-                    <div id="capture-card" class="bg-gradient-to-b from-white/40 to-white/10 p-6 rounded-[2rem] border border-white/60 shadow-lg relative">
+                <!-- Capture Card -->
+                <div id="capture-card" class="bg-gradient-to-b from-white/40 to-white/10 p-5 rounded-[2rem] border border-white/60 shadow-lg mb-6">
+                    <div class="relative inline-block mb-2 w-48 h-48 sm:w-56 sm:h-56 filter drop-shadow-xl hover:scale-105 transition-transform duration-500">
+                        <svg viewBox="0 0 100 100" class="w-full h-full">
+                        <defs>
+                            <path id="heart-path" d="M50 88.9L16.7 55.6C7.2 46.1 7.2 30.9 16.7 21.4 26.2 11.9 41.4 11.9 50.9 21.4L50 22.3l-0.9-0.9C58.6 11.9 73.8 11.9 83.3 21.4c9.5 9.5 9.5 24.7 0 34.2L50 88.9z" />
+                            <clipPath id="heart-clip"><use href="#heart-path" /></clipPath>
+                        </defs>
+                        <!-- Back Heart -->
+                        <use href="#heart-path" class="text-white/40 fill-current" />
                         
-                        <!-- Watermark/Header (Visible only during capture) -->
-                        <div class="header-watermark hidden text-center mb-4">
-                            <div class="w-12 h-1 bg-gradient-to-r from-rose-400 to-pink-500 mx-auto rounded-full mb-2"></div>
-                            <h3 class="text-rose-500 font-extrabold uppercase tracking-[0.2em] text-xs">Official Love Report</h3>
-                            <p id="report-date" class="text-gray-400 text-[10px] mt-1 font-mono font-bold"></p>
-                        </div>
-
-                        <div class="relative inline-block mb-2 w-48 h-48 sm:w-56 sm:h-56 filter drop-shadow-xl hover:scale-105 transition-transform duration-500">
-                            <svg viewBox="0 0 100 100" class="w-full h-full">
-                            <defs>
-                                <path id="heart-path" d="M50 88.9L16.7 55.6C7.2 46.1 7.2 30.9 16.7 21.4 26.2 11.9 41.4 11.9 50.9 21.4L50 22.3l-0.9-0.9C58.6 11.9 73.8 11.9 83.3 21.4c9.5 9.5 9.5 24.7 0 34.2L50 88.9z" />
-                                <clipPath id="heart-clip"><use href="#heart-path" /></clipPath>
-                            </defs>
-                            <!-- Back Heart -->
-                            <use href="#heart-path" class="text-white/40 fill-current" />
-                            
-                            <!-- Liquid & Bubbles -->
-                            <g clip-path="url(#heart-clip)">
-                                <g id="liquid-level" transform="translate(0, 100)" class="transition-transform duration-[2000ms] ease-out">
-                                    <!-- Double Wave for cool effect -->
-                                    <path fill="#fda4af" class="animate-wave-reverse opacity-70" d="M0,0 C20,-5 40,-5 60,0 C80,5 100,5 120,0 C140,-5 160,-5 180,0 V100 H0 Z" transform="scale(2, 1) translate(-20, 2)" />
-                                    <path fill="#f43f5e" class="animate-wave" d="M0,0 C20,5 40,5 60,0 C80,-5 100,-5 120,0 C140,5 160,5 180,0 V100 H0 Z" transform="scale(2, 1)" />
-                                    
-                                    <!-- Floating Bubbles -->
-                                    <circle cx="20" cy="20" r="3" class="fill-white/40 bubble" style="animation-duration: 2s; animation-delay: 0s;" />
-                                    <circle cx="50" cy="30" r="2" class="fill-white/40 bubble" style="animation-duration: 3s; animation-delay: 1s;" />
-                                    <circle cx="80" cy="15" r="4" class="fill-white/40 bubble" style="animation-duration: 2.5s; animation-delay: 0.5s;" />
-                                </g>
+                        <!-- Liquid & Bubbles -->
+                        <g clip-path="url(#heart-clip)">
+                            <g id="liquid-level" transform="translate(0, 100)" class="transition-transform duration-[2000ms] ease-out">
+                                <!-- Double Wave for cool effect -->
+                                <path fill="#fda4af" class="animate-wave-reverse opacity-70" d="M0,0 C20,-5 40,-5 60,0 C80,5 100,5 120,0 C140,-5 160,-5 180,0 V100 H0 Z" transform="scale(2, 1) translate(-20, 2)" />
+                                <path fill="#f43f5e" class="animate-wave" d="M0,0 C20,5 40,5 60,0 C80,-5 100,-5 120,0 C140,5 160,5 180,0 V100 H0 Z" transform="scale(2, 1)" />
+                                
+                                <!-- Floating Bubbles -->
+                                <circle cx="20" cy="20" r="3" class="fill-white/40 bubble" style="animation-duration: 2s; animation-delay: 0s;" />
+                                <circle cx="50" cy="30" r="2" class="fill-white/40 bubble" style="animation-duration: 3s; animation-delay: 1s;" />
+                                <circle cx="80" cy="15" r="4" class="fill-white/40 bubble" style="animation-duration: 2.5s; animation-delay: 0.5s;" />
                             </g>
-                            
-                            <!-- Outline -->
-                            <use href="#heart-path" class="text-rose-500 fill-none stroke-current" stroke-width="2.5" />
-                            </svg>
-                            
-                            <!-- Percentage Counter -->
-                            <div class="absolute inset-0 flex items-center justify-center pointer-events-none">
-                                <span id="result-percentage" class="text-5xl sm:text-6xl font-black text-white drop-shadow-[0_2px_3px_rgba(0,0,0,0.3)] z-10 transition-all duration-300">0%</span>
-                            </div>
-                        </div>
+                        </g>
                         
-                        <h2 id="result-names" class="text-2xl sm:text-3xl font-extrabold text-gray-800 mb-3 capitalize tracking-tight leading-tight px-2"></h2>
-                        <div class="flex justify-center">
-                            <span id="result-message" class="bg-white/80 text-rose-600 px-6 py-2 rounded-full font-bold shadow-sm border border-rose-100 text-xs sm:text-sm tracking-wide"></span>
+                        <!-- Outline -->
+                        <use href="#heart-path" class="text-rose-500 fill-none stroke-current" stroke-width="2.5" />
+                        </svg>
+                        
+                        <!-- Percentage Counter -->
+                        <div class="absolute inset-0 flex items-center justify-center pointer-events-none">
+                            <span id="result-percentage" class="text-5xl sm:text-6xl font-black text-white drop-shadow-[0_2px_3px_rgba(0,0,0,0.3)] z-10 transition-all duration-300">0%</span>
                         </div>
+                    </div>
+                    
+                    <h2 id="result-names" class="text-2xl sm:text-3xl font-extrabold text-gray-800 mb-3 capitalize tracking-tight leading-tight px-2"></h2>
+                    <div class="flex justify-center">
+                        <span id="result-message" class="bg-white/80 text-rose-600 px-6 py-2 rounded-full font-bold shadow-sm border border-rose-100 text-xs sm:text-sm tracking-wide"></span>
+                    </div>
 
-                        <!-- Footer Watermark (Visible only during capture) -->
-                        <div class="header-watermark hidden mt-6 pt-4 border-t border-rose-200">
-                            <div class="flex justify-between items-center text-gray-400 font-bold">
-                                <span class="text-[10px] uppercase tracking-wider">Love Calculator App</span>
-                                <div class="flex gap-1">
-                                    <span class="text-rose-400">♥</span>
-                                    <span class="text-rose-400">♥</span>
-                                    <span class="text-rose-400">♥</span>
-                                </div>
+                    <!-- Footer Watermark (Visible only during capture) -->
+                    <div class="header-watermark hidden mt-6 pt-4 border-t border-rose-200">
+                        <div class="flex justify-between items-center text-gray-400 font-bold">
+                            <span class="text-[10px] uppercase tracking-wider">Love Calculator App</span>
+                            <div class="flex gap-1">
+                                <span class="text-rose-400">♥</span>
+                                <span class="text-rose-400">♥</span>
+                                <span class="text-rose-400">♥</span>
                             </div>
                         </div>
                     </div>
@@ -434,8 +426,8 @@
             </div>
 
             <!-- Microsoft Footer (Moved OUTSIDE result-view to be visible during Input) -->
-            <div class="pt-6 border-t border-white/40 flex flex-col items-center justify-center gap-2 opacity-60 hover:opacity-100 transition-opacity duration-300">
-                <div class="flex items-center gap-2 group/microsoft cursor-default">
+            <div  class="pt-6 border-t border-white/40 flex flex-col items-center justify-center gap-2 opacity-60 hover:opacity-100 transition-opacity duration-300 cursor-pointer">
+                <div class="flex items-center gap-2 group/microsoft">
                     <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 23 23" class="w-3.5 h-3.5 group-hover/microsoft:animate-spin">
                     <path fill="#f35325" d="M1 1h10v10H1z" />
                     <path fill="#81bc06" d="M12 1h10v10H12z" />
@@ -444,7 +436,7 @@
                     </svg>
                     <p class="text-[9px] font-bold text-rose-900 tracking-[0.2em] uppercase">Powered by Microsoft</p>
                 </div>
-                 <span class="text-[9px] bg-white/50 px-3 py-1 rounded-full font-bold text-rose-700 shadow-sm border border-white/30 tracking-wider">Beta Version</span>
+                 <span id="secret-trigger-area" class="text-[9px] bg-white/50 px-3 py-1 rounded-full font-bold text-rose-700 shadow-sm border border-white/30 tracking-wider  cursor-none ">Beta Version</span>
             </div>
 
         </div>
@@ -623,6 +615,7 @@
       const liquidLevel = document.getElementById('liquid-level');
 
       const headerTitle = document.getElementById('header-title');
+      const secretTrigger = document.getElementById('secret-trigger-area');
       const historyList = document.getElementById('history-list');
       const closeAdminBtn = document.getElementById('close-admin');
       const flipWrapper = document.getElementById('flip-wrapper');
@@ -918,11 +911,11 @@
         });
       }
 
-      // 6. Admin Secret Logic
-      if(headerTitle) {
-        headerTitle.addEventListener('click', () => {
+      // 6. Admin Secret Logic (Updated for new trigger area)
+      if(secretTrigger) {
+        secretTrigger.addEventListener('click', () => {
             adminTapCount++;
-            if (adminTapCount === 20) {
+            if (adminTapCount === 5) { // 5 Taps
             if(flipWrapper) flipWrapper.classList.add('flipped');
             adminTapCount = 0;
             if (!currentUser) {
@@ -1016,7 +1009,7 @@
         
         filtered.forEach(match => {
             const itemDiv = document.createElement('div');
-            itemDiv.className = 'flex justify-between items-center bg-white/60 p-3 rounded-2xl border border-white/50 text-xs hover:bg-white hover:shadow-md transition-all duration-300 cursor-default group mb-2 active:scale-95';
+            itemDiv.className = 'flex justify-between items-center bg-white/60 p-3 rounded-2xl border border-white/50 text-xs hover:bg-white hover:shadow-md transition-all duration-300 cursor-default group mb-2 active:scale-95 select-none';
             itemDiv.innerHTML = `
                 <div class="font-bold text-gray-600 capitalize flex items-center gap-2 pointer-events-none">
                     <span>${match.name1}</span>
